@@ -1577,6 +1577,10 @@ fn launch_vnc_connection(
         );
     }
 
+    // The jump host's tunnel (if any) is opened by the caller and handed here as
+    // `ssh_tunnel`, with `host:port` already the tunnel's local end — so this
+    // path dials the target through the bastion instead of straight (issue #450).
+
     // Issue #209: an external-viewer VNC session gets no notebook tab. Spawn the
     // viewer and register it so the sidebar surfaces it without a dead tab
     // (R1.1). The password is handled by the viewer, never on the command line.
@@ -1643,7 +1647,7 @@ fn launch_vnc_connection(
         notebook.set_history_entry_id(session_id, entry_id);
     }
 
-    // Keep the tunnel alive for the duration of the session
+    // Store SSH tunnel so it stays alive for the duration of the session
     if let Some(tunnel) = ssh_tunnel {
         notebook.store_ssh_tunnel(session_id, tunnel);
     }
